@@ -158,7 +158,7 @@ function FirefighterRow({ firefighter, label, onUpdate }: FirefighterRowProps) {
         />
       </div>
 
-      <div className="flex flex-col gap-1 items-end">
+      <div className="flex items-center gap-2">
         <div className="flex items-center gap-1">
           <span className="text-[9px] text-muted-foreground uppercase">
             Pow:

@@ -8,14 +8,62 @@ import { StatusLegend } from "@/components/status-legend";
 import type { Team, TeamStatus, Firefighter } from "@/components/team-card";
 
 const availableRescuers = [
-  { id: "r1", name: "Kowalski Jan", serialNumber: "1A" },
-  { id: "r2", name: "Nowak Piotr", serialNumber: "1B" },
-  { id: "r3", name: "Wiśniewski Adam", serialNumber: "1C" },
-  { id: "r4", name: "Wójcik Tomasz", serialNumber: "1D" },
-  { id: "r5", name: "Kamiński Marcin", serialNumber: "1E" },
-  { id: "r6", name: "Lewandowski Paweł", serialNumber: "1F" },
-  { id: "r7", name: "Zieliński Krzysztof", serialNumber: "1G" },
-  { id: "r8", name: "Szymański Michał", serialNumber: "2A" },
+  {
+    id: "r1",
+    name: "Kowalski Jan",
+    serialNumber: "1A",
+    oxygenLevel: 300,
+    exitTime: 40,
+  },
+  {
+    id: "r2",
+    name: "Nowak Piotr",
+    serialNumber: "1B",
+    oxygenLevel: 300,
+    exitTime: 40,
+  },
+  {
+    id: "r3",
+    name: "Wiśniewski Adam",
+    serialNumber: "1C",
+    oxygenLevel: 300,
+    exitTime: 40,
+  },
+  {
+    id: "r4",
+    name: "Wójcik Tomasz",
+    serialNumber: "1D",
+    oxygenLevel: 300,
+    exitTime: 40,
+  },
+  {
+    id: "r5",
+    name: "Kamiński Marcin",
+    serialNumber: "1E",
+    oxygenLevel: 300,
+    exitTime: 40,
+  },
+  {
+    id: "r6",
+    name: "Lewandowski Paweł",
+    serialNumber: "1F",
+    oxygenLevel: 300,
+    exitTime: 40,
+  },
+  {
+    id: "r7",
+    name: "Zieliński Krzysztof",
+    serialNumber: "1G",
+    oxygenLevel: 300,
+    exitTime: 40,
+  },
+  {
+    id: "r8",
+    name: "Szymański Michał",
+    serialNumber: "2A",
+    oxygenLevel: 300,
+    exitTime: 40,
+  },
 ];
 
 const createFirefighter = (id: string, label: string): Firefighter => ({
@@ -50,8 +98,20 @@ const initialTeams: Team[] = [
     type: "Drabina",
     status: "active",
     firefighters: [
-      { id: "2-a", name: "Kowalski J.", serialNumber: "2A", oxygenLevel: 280, exitTime: 40 },
-      { id: "2-b", name: "Nowak P.", serialNumber: "2B", oxygenLevel: 260, exitTime: 40 },
+      {
+        id: "2-a",
+        name: "Kowalski J.",
+        serialNumber: "2A",
+        oxygenLevel: 280,
+        exitTime: 40,
+      },
+      {
+        id: "2-b",
+        name: "Nowak P.",
+        serialNumber: "2B",
+        oxygenLevel: 260,
+        exitTime: 40,
+      },
     ],
   },
   {
@@ -59,8 +119,20 @@ const initialTeams: Team[] = [
     type: "Wsparcie",
     status: "active",
     firefighters: [
-      { id: "3-a", name: "Wiśniewski A.", serialNumber: "3A", oxygenLevel: 180, exitTime: 35 },
-      { id: "3-b", name: "Wójcik T.", serialNumber: "3B", oxygenLevel: 220, exitTime: 38 },
+      {
+        id: "3-a",
+        name: "Wiśniewski A.",
+        serialNumber: "3A",
+        oxygenLevel: 180,
+        exitTime: 35,
+      },
+      {
+        id: "3-b",
+        name: "Wójcik T.",
+        serialNumber: "3B",
+        oxygenLevel: 220,
+        exitTime: 38,
+      },
     ],
   },
   {
@@ -68,8 +140,20 @@ const initialTeams: Team[] = [
     type: "Rezerwa",
     status: "warning",
     firefighters: [
-      { id: "4-a", name: "Kamiński M.", serialNumber: "4A", oxygenLevel: 120, exitTime: 25 },
-      { id: "4-b", name: "Lewandowski P.", serialNumber: "4B", oxygenLevel: 150, exitTime: 28 },
+      {
+        id: "4-a",
+        name: "Kamiński M.",
+        serialNumber: "4A",
+        oxygenLevel: 120,
+        exitTime: 25,
+      },
+      {
+        id: "4-b",
+        name: "Lewandowski P.",
+        serialNumber: "4B",
+        oxygenLevel: 150,
+        exitTime: 28,
+      },
     ],
   },
   {
@@ -82,8 +166,20 @@ const initialTeams: Team[] = [
     type: "RIT",
     status: "danger",
     firefighters: [
-      { id: "6-a", name: "Zieliński K.", serialNumber: "6A", oxygenLevel: 80, exitTime: 15 },
-      { id: "6-b", name: "Szymański M.", serialNumber: "6B", oxygenLevel: 95, exitTime: 18 },
+      {
+        id: "6-a",
+        name: "Zieliński K.",
+        serialNumber: "6A",
+        oxygenLevel: 80,
+        exitTime: 15,
+      },
+      {
+        id: "6-b",
+        name: "Szymański M.",
+        serialNumber: "6B",
+        oxygenLevel: 95,
+        exitTime: 18,
+      },
     ],
   },
   {
@@ -104,7 +200,7 @@ export default function Dashboard() {
 
   const handleUpdateTeam = useCallback((updatedTeam: Team) => {
     setTeams((prev) =>
-      prev.map((team) => (team.id === updatedTeam.id ? updatedTeam : team))
+      prev.map((team) => (team.id === updatedTeam.id ? updatedTeam : team)),
     );
   }, []);
 
@@ -121,7 +217,11 @@ export default function Dashboard() {
         <Sidebar availableRescuers={availableRescuers} />
 
         <main className="flex-1 overflow-auto">
-          <TeamsGrid teams={teams} onUpdateTeam={handleUpdateTeam} viewMode={viewMode} />
+          <TeamsGrid
+            teams={teams}
+            onUpdateTeam={handleUpdateTeam}
+            viewMode={viewMode}
+          />
         </main>
       </div>
 
