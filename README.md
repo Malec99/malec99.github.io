@@ -17,23 +17,22 @@ This project is configured to automatically deploy to GitHub Pages when you push
    ```
 
 2. **Enable GitHub Pages:**
-   - Go to your repository settings on GitHub
-   - Navigate to **Settings** > **Pages**
+   - Go to your repository settings on GitHub: `https://github.com/Malec99/malec99.github.io/settings/pages`
    - Under "Build and deployment":
      - Source: Select **GitHub Actions**
    - The workflow will automatically run and deploy your site
 
 3. **Access your site:**
-   - Your site will be available at: `https://Malec99.github.io/centrala-prototyp/`
+   - Your site will be available at: `https://malec99.github.io/`
    - It may take a few minutes for the first deployment
 
 ### How It Works:
 
-- **`basePath` and `assetPrefix`**: Configured in `next.config.mjs` to properly handle the `/centrala-prototyp` subdirectory
+- **User Site**: Repository name `malec99.github.io` deploys to root domain (no subdirectory needed)
 - **Static Export**: `output: 'export'` generates static HTML/CSS/JS files
 - **`.nojekyll`**: Prevents GitHub Pages from processing the site with Jekyll
-- **Conditional Paths**: In development, the app runs on `localhost:3000` (no basePath). In production, it uses `/centrala-prototyp`
 - **Trailing Slash**: Enabled for better compatibility with static hosting
+- **Authentication**: Site is protected with username/password login (PM/manometry)
 
 ### Troubleshooting:
 
