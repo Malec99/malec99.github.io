@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
+  basePath: '/centrala-prototyp',
   typescript: {
     ignoreBuildErrors: true,
   },
