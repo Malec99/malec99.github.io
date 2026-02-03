@@ -27,6 +27,23 @@ This project is configured to automatically deploy to GitHub Pages when you push
    - Your site will be available at: `https://Malec99.github.io/centrala-prototyp/`
    - It may take a few minutes for the first deployment
 
+### How It Works:
+
+- **`basePath` and `assetPrefix`**: Configured in `next.config.mjs` to properly handle the `/centrala-prototyp` subdirectory
+- **Static Export**: `output: 'export'` generates static HTML/CSS/JS files
+- **`.nojekyll`**: Prevents GitHub Pages from processing the site with Jekyll
+- **Conditional Paths**: In development, the app runs on `localhost:3000` (no basePath). In production, it uses `/centrala-prototyp`
+- **Trailing Slash**: Enabled for better compatibility with static hosting
+
+### Troubleshooting:
+
+If styles don't load after deployment:
+
+1. Check the GitHub Actions workflow status in the Actions tab
+2. Verify GitHub Pages is set to use "GitHub Actions" as source (not Deploy from branch)
+3. Make sure the deployment succeeded (green checkmark in Actions)
+4. Clear your browser cache and hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
+
 ## 🛠️ Development
 
 ### Prerequisites

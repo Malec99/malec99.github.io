@@ -1,13 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  basePath: '/centrala-prototyp',
+  output: "export",
+  basePath: process.env.NODE_ENV === "production" ? "/centrala-prototyp" : "",
+  assetPrefix:
+    process.env.NODE_ENV === "production" ? "/centrala-prototyp/" : "",
   typescript: {
     ignoreBuildErrors: true,
   },
   images: {
     unoptimized: true,
   },
-}
+  trailingSlash: true,
+};
 
-export default nextConfig
+export default nextConfig;
