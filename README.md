@@ -9,6 +9,7 @@ This project is configured to automatically deploy to GitHub Pages when you push
 ### Setup Steps:
 
 1. **Push to GitHub:**
+
    ```bash
    git add .
    git commit -m "Configure GitHub Pages deployment"
@@ -29,14 +30,17 @@ This project is configured to automatically deploy to GitHub Pages when you push
 ## 🛠️ Development
 
 ### Prerequisites
+
 - Node.js 20+ (with pnpm)
 
 ### Install Dependencies
+
 ```bash
 pnpm install
 ```
 
 ### Run Development Server
+
 ```bash
 pnpm dev
 ```
@@ -44,6 +48,7 @@ pnpm dev
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Build for Production
+
 ```bash
 pnpm build
 ```
@@ -51,6 +56,7 @@ pnpm build
 The static files will be generated in the `out/` directory.
 
 ### Preview Production Build
+
 ```bash
 pnpm start
 ```

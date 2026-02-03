@@ -35,13 +35,6 @@ interface TeamCardProps {
   onUpdate: (team: Team) => void;
 }
 
-const statusBorderStyles: Record<TeamStatus, string> = {
-  standby: "border-border",
-  active: "border-l-status-safe",
-  warning: "border-l-status-warning",
-  danger: "border-l-status-danger",
-};
-
 const statusBadgeStyles: Record<TeamStatus, string> = {
   standby: "bg-muted text-muted-foreground",
   active: "bg-status-safe text-status-safe-foreground",
@@ -49,9 +42,18 @@ const statusBadgeStyles: Record<TeamStatus, string> = {
   danger: "bg-status-danger text-status-danger-foreground",
 };
 
+const getOxygenBgColor = (level: number) => {
+  if (level >= 200) return "bg-status-safe text-status-safe-foreground";
+  if (level >= 100) return "bg-status-warning text-status-warning-foreground";
+  return "bg-status-danger text-status-danger-foreground";
+};
+
 export function TeamCard({ team, onUpdate }: TeamCardProps) {
   const updateFirefighter = (index: 0 | 1, updates: Partial<Firefighter>) => {
-    const newFirefighters = [...team.firefighters] as [Firefighter, Firefighter];
+    const newFirefighters = [...team.firefighters] as [
+      Firefighter,
+      Firefighter,
+    ];
     newFirefighters[index] = { ...newFirefighters[index], ...updates };
     onUpdate({ ...team, firefighters: newFirefighters });
   };
@@ -61,20 +63,24 @@ export function TeamCard({ team, onUpdate }: TeamCardProps) {
   };
 
   return (
-    <Card className={cn(
-      "transition-all duration-300 border-l-4 bg-card",
-      statusBorderStyles[team.status]
-    )}>
-      <CardHeader className="pb-2 pt-3 px-4">
+    <Card className="bg-card border border-border">
+      <CardHeader
+        className={cn("pb-2 pt-3 px-4", statusBadgeStyles[team.status])}
+      >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="flex items-center justify-center w-8 h-8 rounded-lg font-bold text-lg bg-primary text-primary-foreground">
-              {team.id}
-            </span>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-medium opacity-70 uppercase leading-none">
+                Zespół
+              </span>
+              <span className="text-2xl font-bold leading-none mt-0.5">
+                {team.id}
+              </span>
+            </div>
             <Input
               value={team.type}
               onChange={(e) => updateTeam({ type: e.target.value })}
-              className="h-7 w-24 text-sm font-medium border-0 bg-transparent p-0 text-card-foreground"
+              className="h-7 w-24 text-sm font-semibold border-0 bg-black/10 px-2"
               placeholder="Typ"
             />
           </div>
@@ -82,10 +88,7 @@ export function TeamCard({ team, onUpdate }: TeamCardProps) {
             value={team.status}
             onValueChange={(value: TeamStatus) => updateTeam({ status: value })}
           >
-            <SelectTrigger className={cn(
-              "h-7 w-28 text-xs border-0 font-medium",
-              statusBadgeStyles[team.status]
-            )}>
+            <SelectTrigger className="h-7 w-28 text-xs border-0 font-medium bg-black/10">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -95,9 +98,6 @@ export function TeamCard({ team, onUpdate }: TeamCardProps) {
               <SelectItem value="danger">Krytyczny</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-        <div className="text-xs mt-1 text-muted-foreground">
-          Czas wyjścia: <span className="font-medium text-card-foreground">{team.exitTime} min</span>
         </div>
       </CardHeader>
       <CardContent className="px-4 pb-3 space-y-2">
@@ -128,40 +128,68 @@ function FirefighterRow({ firefighter, label, onUpdate }: FirefighterRowProps) {
   };
 
   return (
-    <div className="flex items-center gap-2 p-2 rounded-lg bg-secondary/50">
-      <span className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold shrink-0 bg-primary text-primary-foreground">
+    <div className="flex items-center gap-2 p-2 rounded-lg bg-card hover:bg-secondary/20 transition-colors border border-border">
+      <span
+        className={cn(
+          "w-8 h-8 rounded flex items-center justify-center text-base font-bold shrink-0",
+          getOxygenBgColor(firefighter.oxygenLevel),
+        )}
+      >
         {label}
       </span>
-      
-      <div className="flex-1 grid grid-cols-3 gap-2 items-center min-w-0">
+
+      <div className="flex-1 space-y-1 min-w-0">
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] text-muted-foreground uppercase font-medium">
+            S/N:
+          </span>
+          <Input
+            value={firefighter.serialNumber}
+            onChange={(e) => onUpdate({ serialNumber: e.target.value })}
+            placeholder="S/N"
+            className="h-5 w-12 text-xs font-mono font-bold border-0 bg-secondary/50 px-1"
+          />
+        </div>
         <Input
           value={firefighter.name}
           onChange={(e) => onUpdate({ name: e.target.value })}
-          placeholder="Nazwa"
-          className="h-6 text-xs border-0 bg-transparent p-1 text-card-foreground"
+          placeholder="NAZWA"
+          className="h-6 text-xs font-semibold border-0 bg-secondary/30 px-2 text-card-foreground uppercase"
         />
-        
+      </div>
+
+      <div className="flex flex-col gap-1 items-end">
         <div className="flex items-center gap-1">
+          <span className="text-[9px] text-muted-foreground uppercase">
+            Pow:
+          </span>
           <Input
             type="number"
             value={firefighter.oxygenLevel}
-            onChange={(e) => onUpdate({ oxygenLevel: parseInt(e.target.value) || 0 })}
+            onChange={(e) =>
+              onUpdate({ oxygenLevel: parseInt(e.target.value) || 0 })
+            }
             className={cn(
-              "h-6 w-14 text-xs text-center border-0 p-0 font-mono font-bold bg-secondary",
-              getOxygenColor(firefighter.oxygenLevel)
+              "h-6 w-14 text-sm text-center border-0 p-0 font-mono font-bold bg-secondary/50",
+              getOxygenColor(firefighter.oxygenLevel),
             )}
           />
-          <span className="text-xs text-muted-foreground">bar</span>
+          <span className="text-[9px] text-muted-foreground">bar</span>
         </div>
-        
+
         <div className="flex items-center gap-1">
+          <span className="text-[9px] text-muted-foreground uppercase">
+            Wyj:
+          </span>
           <Input
             type="number"
             value={firefighter.exitTime}
-            onChange={(e) => onUpdate({ exitTime: parseInt(e.target.value) || 0 })}
-            className="h-6 w-12 text-xs text-center border-0 p-0 font-mono bg-secondary text-card-foreground"
+            onChange={(e) =>
+              onUpdate({ exitTime: parseInt(e.target.value) || 0 })
+            }
+            className="h-6 w-12 text-sm text-center border-0 p-0 font-mono font-bold bg-secondary/50 text-card-foreground"
           />
-          <span className="text-xs text-muted-foreground">min</span>
+          <span className="text-[9px] text-muted-foreground">min</span>
         </div>
       </div>
     </div>
