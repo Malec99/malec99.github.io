@@ -10,6 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export type TeamStatus = "standby" | "active" | "warning" | "danger";
 
@@ -19,6 +21,7 @@ export interface Firefighter {
   serialNumber: string;
   oxygenLevel: number;
   exitTime: number;
+  pmIdentificationActive?: boolean;
 }
 
 export interface Team {
@@ -49,6 +52,8 @@ const getOxygenBgColor = (level: number) => {
 };
 
 export function TeamCard({ team, onUpdate }: TeamCardProps) {
+  const router = useRouter();
+
   const updateFirefighter = (index: 0 | 1, updates: Partial<Firefighter>) => {
     const newFirefighters = [...team.firefighters] as [
       Firefighter,
@@ -62,10 +67,18 @@ export function TeamCard({ team, onUpdate }: TeamCardProps) {
     onUpdate({ ...team, ...updates });
   };
 
+  const handleHeaderClick = () => {
+    router.push(`/team/${team.id}`);
+  };
+
   return (
     <Card className="bg-card border border-border">
       <CardHeader
-        className={cn("pb-2 pt-3 px-4", statusBadgeStyles[team.status])}
+        className={cn(
+          "pb-2 pt-3 px-4 cursor-pointer hover:opacity-90 transition-opacity group",
+          statusBadgeStyles[team.status],
+        )}
+        onClick={handleHeaderClick}
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
@@ -80,24 +93,33 @@ export function TeamCard({ team, onUpdate }: TeamCardProps) {
             <Input
               value={team.type}
               onChange={(e) => updateTeam({ type: e.target.value })}
+              onClick={(e) => e.stopPropagation()}
               className="h-7 w-24 text-sm font-semibold border-0 bg-black/10 px-2"
               placeholder="Typ"
             />
           </div>
-          <Select
-            value={team.status}
-            onValueChange={(value: TeamStatus) => updateTeam({ status: value })}
-          >
-            <SelectTrigger className="h-7 w-28 text-xs border-0 font-medium bg-black/10">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="standby">Gotowy</SelectItem>
-              <SelectItem value="active">W środku</SelectItem>
-              <SelectItem value="warning">Ostrzeżenie</SelectItem>
-              <SelectItem value="danger">Krytyczny</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Select
+              value={team.status}
+              onValueChange={(value: TeamStatus) =>
+                updateTeam({ status: value })
+              }
+            >
+              <SelectTrigger
+                className="h-7 w-28 text-xs border-0 font-medium bg-black/10"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="standby">Gotowy</SelectItem>
+                <SelectItem value="active">W środku</SelectItem>
+                <SelectItem value="warning">Ostrzeżenie</SelectItem>
+                <SelectItem value="danger">Krytyczny</SelectItem>
+              </SelectContent>
+            </Select>
+            <ChevronRight className="h-5 w-5 opacity-50 group-hover:opacity-100 transition-opacity" />
+          </div>
         </div>
       </CardHeader>
       <CardContent className="px-4 pb-3 space-y-2">
@@ -106,6 +128,8 @@ export function TeamCard({ team, onUpdate }: TeamCardProps) {
             key={ff.id}
             firefighter={ff}
             label={idx === 0 ? "A" : "B"}
+            teamId={team.id}
+            firefighterIdx={idx}
             onUpdate={(updates) => updateFirefighter(idx as 0 | 1, updates)}
           />
         ))}
@@ -117,23 +141,38 @@ export function TeamCard({ team, onUpdate }: TeamCardProps) {
 interface FirefighterRowProps {
   firefighter: Firefighter;
   label: string;
+  teamId: number;
+  firefighterIdx: number;
   onUpdate: (updates: Partial<Firefighter>) => void;
 }
 
-function FirefighterRow({ firefighter, label, onUpdate }: FirefighterRowProps) {
+function FirefighterRow({
+  firefighter,
+  label,
+  teamId,
+  firefighterIdx,
+  onUpdate,
+}: FirefighterRowProps) {
+  const router = useRouter();
   const getOxygenColor = (level: number) => {
     if (level >= 200) return "text-status-safe";
     if (level >= 100) return "text-status-warning";
     return "text-status-danger";
   };
 
+  const handleLabelClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/team/${teamId}/firefighter/${firefighterIdx}`);
+  };
+
   return (
     <div className="flex items-center gap-2 p-2 rounded-lg bg-card hover:bg-secondary/20 transition-colors border border-border">
       <span
         className={cn(
-          "w-8 h-8 rounded flex items-center justify-center text-base font-bold shrink-0",
+          "w-8 h-8 rounded flex items-center justify-center text-base font-bold shrink-0 cursor-pointer hover:opacity-90 transition-opacity",
           getOxygenBgColor(firefighter.oxygenLevel),
         )}
+        onClick={handleLabelClick}
       >
         {label}
       </span>

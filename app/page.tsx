@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { DashboardHeader, type ViewMode } from "@/components/dashboard-header";
 import { Sidebar } from "@/components/sidebar";
 import { TeamsGrid } from "@/components/teams-grid";
@@ -72,6 +72,7 @@ const createFirefighter = (id: string, label: string): Firefighter => ({
   serialNumber: label,
   oxygenLevel: 300,
   exitTime: 40,
+  pmIdentificationActive: false,
 });
 
 const createTeam = (id: number): Team => ({
@@ -195,8 +196,28 @@ const initialTeams: Team[] = [
 ];
 
 export default function Dashboard() {
-  const [teams, setTeams] = useState<Team[]>(initialTeams);
+  const [teams, setTeams] = useState<Team[]>(() => {
+    // Initialize from localStorage or use initialTeams
+    if (typeof window !== "undefined") {
+      const storedTeams = localStorage.getItem("teams");
+      if (storedTeams) {
+        try {
+          return JSON.parse(storedTeams);
+        } catch (e) {
+          console.error("Failed to load teams from localStorage", e);
+        }
+      }
+      // Save initialTeams to localStorage on first load
+      localStorage.setItem("teams", JSON.stringify(initialTeams));
+    }
+    return initialTeams;
+  });
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
+
+  // Save teams to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("teams", JSON.stringify(teams));
+  }, [teams]);
 
   const handleUpdateTeam = useCallback((updatedTeam: Team) => {
     setTeams((prev) =>
@@ -211,6 +232,7 @@ export default function Dashboard() {
         unitName="JRG 3 Kraków"
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        availableRescuers={availableRescuers}
       />
 
       <div className="flex flex-1 overflow-hidden">
